@@ -17,5 +17,5 @@ spring:
       default:
         deserialization:
           exception:
-            handler: org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
-
+            #handler: org.apache.kafka.streams.errors.LogAndContinueExceptionHandler # Method1: handling DeserializationException
+            #handler: com.kafka.streams.app.exception.StreamDeserializationExceptionHandler # Method2: handling DeserializationException
