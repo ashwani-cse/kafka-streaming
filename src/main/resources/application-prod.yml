@@ -1,0 +1,9 @@
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  kafka:
+    streams:
+      bootstrap-servers: kafka-prod.com:9092
+      application-id: kafka-streams-app
