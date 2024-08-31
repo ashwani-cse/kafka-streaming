@@ -66,6 +66,7 @@ public class ProducerRunner {
             // delay(30000);
             String key = "P1_message";
             key = null;
+            produceMessage(GreetingStreamsTopology.GREETINGS, key, "Error");
             for (int i = 0; i < 20; i++) {
                 String message = "Hi " + i + " from " + Thread.currentThread().getName();
                 produceMessage(GreetingStreamsTopology.GREETINGS, key, message);

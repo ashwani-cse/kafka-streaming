@@ -12,9 +12,9 @@ import java.util.Map;
  * Created on 18/08/24.
  * This class is used to handle the exception in the serialization of the Kafka Record or if rebalancing is happening or cluster is down
  */
-public class StreamSerializationExceptionHandler implements ProductionExceptionHandler {
+public class StreamSerializationAndProductionExceptionHandler implements ProductionExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(StreamSerializationExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(StreamSerializationAndProductionExceptionHandler.class);
 
     @Override
     public ProductionExceptionHandlerResponse handle(ProducerRecord<byte[], byte[]> record, Exception exception) {

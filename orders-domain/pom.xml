@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.kafka.streams.app</groupId>
+        <artifactId>kafka-streams-app</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <packaging>jar</packaging>
+
+    <!-- NOTE: here we have overridden the group and version for this module.
+       if we don't define both of these then its parent's group and version will be used
+       when we want to use it as jar in another module
+     -->
+    <groupId>com.orders.domain</groupId>
+    <artifactId>orders-domain</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <!-- Build was failing because mvn clean install command was looking for Main class
+     in orders-domain module but we created this as jar only. So we are skipping
+     repacking from spring-boot-maven plugin at the time of build-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.3.3</version>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

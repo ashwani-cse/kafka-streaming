@@ -3,6 +3,7 @@ package com.kafka.streams.app.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.kafka.streams.app.exception.StreamProcessorCustomErrorHandler;
 import com.kafka.streams.app.topology.GreetingStreamsTopology;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
+import org.springframework.kafka.config.StreamsBuilderFactoryBeanConfigurer;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.listener.ConsumerRecordRecoverer;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
@@ -50,6 +52,14 @@ public class GreetingsStreamConfig {
                 (record, ex) -> new TopicPartition("recovererDLQ", -1));
     }
 */
+
+    @Bean
+    public StreamsBuilderFactoryBeanConfigurer streamsBuilderFactoryBeanConfigurer(){
+        return factoryBeanConfigurer -> {
+            factoryBeanConfigurer.setStreamsUncaughtExceptionHandler(new StreamProcessorCustomErrorHandler());
+            // here we can override different configurations here like as above for runtime error handler
+        } ;
+    }
 
     @Bean
     public NewTopic greetingsTopic() {

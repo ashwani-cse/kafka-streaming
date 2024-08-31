@@ -39,12 +39,18 @@ public class GreetingStreamsTopology {
         KStream<String, Greeting> modifiedStream = greetingStream
                 .mapValues((readOnlyKey, value) ->
                         //value.toUpperCase())
-                        new Greeting(value.message().toUpperCase(), value.localDateTime())
+                        {
+                            if(value.message().equals("Error")){
+                                throw new IllegalStateException("Error occured");
+                            }
+                            return new Greeting(value.message().toUpperCase(), value.localDateTime());
+                        }
                 );
 
         modifiedStream
                 .print(Printed.<String, Greeting>toSysOut().withLabel("modified-stream"));
 
+        // send it to downstream
         modifiedStream.to(GREETINGS_OUTPUT,
                 Produced.with(Serdes.String(), new JsonSerde<>(Greeting.class, objectMapper)));
 

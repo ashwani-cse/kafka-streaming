@@ -1,0 +1,30 @@
+server:
+  port: 7070
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: orders-management-streams
+  profiles:
+    active: local # this activates the profile
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  kafka:
+    streams:
+      bootstrap-servers: localhost:9092
+      application-id: orders-management-streams
+    properties:
+      default:
+        key:
+          serde: 'org.apache.kafka.common.serialization.Serdes$StringSerde'
+        value:
+          serde: 'org.apache.kafka.common.serialization.Serdes$StringSerde'
+        deserialization:
+          exception:
+            handler: 'org.apache.kafka.streams.errors.LogAndContinueExceptionHandler'
+        serialization:
+          exception:
+            handler: 'com.streams.management.order.exceptionhandler.StreamsSerializationExceptionHandler'
