@@ -36,6 +36,7 @@ public class OrderService {
         Spliterator<KeyValue<String, Long>> keyValueSpliterator = Spliterators.spliteratorUnknownSize(keyValueIterator, 0);
         Stream<KeyValue<String, Long>> stream = StreamSupport.stream(keyValueSpliterator, false);
         List<OrderCountPerStoreDTO> countsPerStore = stream
+                .peek(keyValue-> log.info("{} details :- key : {}, value : {}", orderType, keyValue.key, keyValue.value))
                 .map(keyValue -> new OrderCountPerStoreDTO(keyValue.key, keyValue.value))
                 .collect(Collectors.toList());
 
