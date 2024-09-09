@@ -1,0 +1,41 @@
+[
+  {
+    "event_id": "event_001",
+    "timestamp": "2024-09-09T10:00:00Z",
+    "account_created": {
+      "account": {
+        "id": "2001",
+        "name": "Checking Account"
+      }
+    }
+  },
+  {
+    "event_id": "event_002",
+    "timestamp": "2024-09-09T10:05:00Z",
+    "account_updated": {
+      "account": {
+        "id": "2001",
+        "status": "ACCOUNT_STATUS_ACTIVE"
+      }
+    }
+  },
+  {
+    "event_id": "event_003",
+    "timestamp": "2024-09-09T10:10:00Z",
+    "account_update_created": {
+      "account_update": {
+        "id": "update_001",
+        "account_id": "2001",
+        "status": "ACCOUNT_UPDATE_STATUS_PENDING"
+      }
+    }
+  },
+  {
+    "event_id": "event_004",
+    "timestamp": "2024-09-09T10:15:00Z",
+    "balances": {
+      "account_id": "2001",
+      "balance": "1500.00"
+    }
+  }
+]

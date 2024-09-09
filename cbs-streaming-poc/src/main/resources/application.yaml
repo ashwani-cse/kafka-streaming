@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: cbs-streaming-app
+
+  kafka:
+    streams:
+      bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+      application-id: cbs-streaming-app
+

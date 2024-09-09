@@ -18,6 +18,7 @@
 	<modules>
 		<module>orders-domain</module>
         <module>order-management-streams</module>
+		<module>cbs-streaming-poc</module>
     </modules>
 
 	<url/>
