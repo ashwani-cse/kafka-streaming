@@ -2,14 +2,16 @@ package com.cbs.streaming.constants;
 
 public final class EventsConfig {
 
+    public static final String DLQ_PREFIX = "dlq-";
+
     public interface Account {
 
-        String ACCOUNT_POSTING_STORE = "ACCOUNT-POSTING-STORE-3";
+        String ACCOUNT_POSTING_STORE = "ACCOUNT-POSTING-STORE";
 
-        String POSTING_TOPIC = "ACCOUNT-POSTING-3";
-        String CREATE_TOPIC = "ACCOUNT-CREATE-3";
-        String UPDATE_TOPIC = "ACCOUNT-UPDATE-3";
-        String BALANCE_TOPIC = "ACCOUNT-BALANCE-3";
+        String POSTING_TOPIC = "ACCOUNT-POSTING";
+        String CREATE_TOPIC = "ACCOUNT-CREATE";
+        String UPDATE_TOPIC = "ACCOUNT-UPDATE";
+        String BALANCE_TOPIC = "ACCOUNT-BALANCE";
 
 
         int RETENTION_PERIOD_DAYS = 7;

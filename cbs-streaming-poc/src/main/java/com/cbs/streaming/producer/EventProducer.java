@@ -15,30 +15,34 @@ import java.io.InputStream;
  */
 @Slf4j
 public class EventProducer {
+    static ObjectMapper objectMapper = new ObjectMapper();
+    static String topicName = EventsConfig.Account.POSTING_TOPIC;
 
     public static void main(String[] args) {
-      // String jsonArrayFileName = "account_events.json";
+        // String jsonArrayFileName = "account_events.json";
         String jsonArrayFileName = "account_events_samples.json";
         InputStream inputStream = EventProducer.class.getClassLoader()
                 .getResourceAsStream(jsonArrayFileName);
 
-        String topicName = EventsConfig.Account.POSTING_TOPIC;
 
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode jsonNode = objectMapper.readTree(inputStream);
-            jsonNode.forEach(jsonNode1 -> {
-                try {
-                    String key = jsonNode1.get("event_id").asText();
-                    String jsonEvent = objectMapper.writeValueAsString(jsonNode1);
-                    log.info("key : {}, jsonEvent : {}", key, jsonEvent);
-                    ProducerUtil.publishMessageSync(topicName, key, jsonEvent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+            publishMessageSync(jsonNode.get(0));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static void publishMessageSync(JsonNode jsonNode) {
+        {
+            try {
+                String key = jsonNode.get("event_id").asText();
+                String jsonEvent = objectMapper.writeValueAsString(jsonNode);
+                log.info("key : {}, jsonEvent : {}", key, jsonEvent);
+                ProducerUtil.publishMessageSync(topicName, key, jsonEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

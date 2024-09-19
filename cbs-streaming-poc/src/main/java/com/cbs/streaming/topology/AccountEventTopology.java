@@ -4,6 +4,7 @@ import com.cbs.streaming.constants.EventsConfig;
 import com.cbs.streaming.util.AccountDeduplicationProcessor;
 import com.cbs.streaming.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
@@ -25,7 +26,19 @@ import static com.cbs.streaming.constants.EventsConfig.Account.*;
 @Slf4j
 public class AccountEventTopology {
 
-    public static Topology accountTopology(StreamsBuilder streamsBuilder) {
+    private StreamsBuilder streamsBuilder;
+
+    public AccountEventTopology(StreamsBuilder streamsBuilder) {
+        this.streamsBuilder = streamsBuilder;
+    }
+
+    @PostConstruct
+    public void init() {
+        Topology topology = buildAccountTopology();
+        log.info("Starting Kafka Streams with topology: {}", topology.describe());
+    }
+
+    public Topology buildAccountTopology() {
 
         // Step 1: Set up the RocksDB state store for deduplication
         StoreBuilder<KeyValueStore<String, JsonNode>> storeBuilder =
@@ -51,21 +64,29 @@ public class AccountEventTopology {
         return streamsBuilder.build();
     }
 
-    private static void accountEventHandling(StreamsBuilder streamsBuilder, Predicate<String, JsonNode> eventType, String downStreamTopic) {
+    private void accountEventHandling(StreamsBuilder streamsBuilder, Predicate<String, JsonNode> eventType, String downStreamTopic) {
         streamsBuilder
                 .stream(POSTING_TOPIC,
                         Consumed.with(Serdes.String(), Serdes.String()))
                 .map((key, value) -> new KeyValue<>(key, JsonUtil.getNode(value)))
                 .filter(eventType)
-                .peek((key, value) -> log.info("Before Deduplication Processing event: {}", value))
-                .process(AccountDeduplicationProcessor::new, ACCOUNT_POSTING_STORE)
-                .peek((key, value) -> log.info("After Deduplication Processing event: {}", value))
+                .peek((key, value) -> log.info("Before Deduplication Processing event: key: {}, value: {}", key, value))
+                .process(() -> new AccountDeduplicationProcessor(downStreamTopic),
+                        ACCOUNT_POSTING_STORE) //
+                .peek((key, value) -> log.info("After Deduplication Processing event: key: {}, value: {}", key, value))
                 .to(downStreamTopic,
                         Produced.with(Serdes.String(), new JsonSerde<>(JsonNode.class)));
+
+        // Define DLQ processing for dynamically generated DLQ topics
+        streamsBuilder
+                .stream(EventsConfig.DLQ_PREFIX + downStreamTopic,
+                        Consumed.with(Serdes.String(), new JsonSerde<>(JsonNode.class)))
+                .peek((key, value) -> log.error("DLQ Event: Key={}, Value={}", key, value));
+
     }
 
-    @Autowired
+/*    @Autowired
     public void process(StreamsBuilder streamsBuilder) {
         accountTopology(streamsBuilder);
-    }
+    }*/
 }
